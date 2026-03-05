@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for Xdebug (Apache/Wamp)",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "serverReadyAction": {
+                "pattern": ".*",
+                "uriFormat": "http://localhost/Projet_PPE1/views/inscription1.php",
+                "action": "openExternally"
+            }
+        },
+        {
+            "name": "Launch Built-in PHP Server",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes",
+                "-S",
+                "localhost:8000"
+            ],
+            "cwd": "${workspaceFolder}",
+            "port": 9003,
+            "serverReadyAction": {
+                "pattern": "Development Server \\(http://localhost:8000\\) started",
+                "uriFormat": "http://localhost:8000/views/inscription1.php",
+                "action": "openExternally"
+            }
+        },
+        {
+            "name": "Run PHP script (CLI)",
+            "type": "php",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "port": 9003
+        }
+    ]
+}

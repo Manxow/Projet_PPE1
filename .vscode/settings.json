@@ -1,0 +1,10 @@
+{
+    "php.validate.executablePath": "C:\\wamp64\\bin\\php\\php8.5.0\\php.exe",
+    "php.debug.executablePath": "C:\\wamp64\\bin\\php\\php8.5.0\\php.exe",
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "*.php": "php"
+    },
+    "php.suggest.basic": false
+}
+

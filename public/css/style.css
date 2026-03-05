@@ -1,0 +1,216 @@
+/* Design inspiré du Football (Vert terrain, blanc ligne, noir) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f5e9;
+    margin: 0;
+}
+
+/* Le Header */
+header {
+    background-color: #2e7d32;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid #1b5e20;
+}
+
+/* Logo (Gauche) */
+.logo-container {
+    flex: 1;
+}
+
+.logo {
+    font-weight: 900;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    border: 3px solid white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background-color: #1b5e20;
+}
+
+/* Titre (Centre) */
+.titre-container {
+    flex: 2;
+    text-align: center;
+}
+
+.titre-container h1 {
+    margin: 0;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* ⚽ Bonus : Animation des ballons au survol de la souris ⚽ */
+.titre-container h1:hover .ballon {
+    display: inline-block;
+    animation: tourne 1s linear infinite;
+}
+
+@keyframes tourne {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Boutons Auth (Droite) */
+.auth-container {
+    flex: 1;
+    text-align: right;
+}
+
+.btn {
+    background-color: white;
+    color: #2e7d32;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn:hover {
+    background-color: #c8e6c9;
+}
+
+/* Les Onglets */
+.barre-onglets {
+    background-color: #4caf50;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.onglet {
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    margin: 0 5px;
+    border-radius: 8px 8px 0 0;
+    font-weight: bold;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.onglet:hover {
+    background-color: #81c784;
+}
+
+.onglet.actif {
+    background-color: white;
+    color: #2e7d32;
+}
+
+/* Contenu de la page */
+.contenu {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    min-height: 500px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.page-auth .contenu {
+    margin-top: 40px;
+    border-radius: 10px;
+    max-width: 500px;
+    text-align: center;
+}
+
+/* --- Styles pour l'alignement des formulaires --- */
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* On met les éléments côte à côte */
+.form-groupe {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Tous les labels auront la même taille, ce qui aligne les inputs ! */
+.form-groupe>label {
+    width: 160px;
+    text-align: right;
+    margin-right: 20px;
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+/* On harmonise la taille des champs texte et select */
+.form-groupe input[type="text"],
+.form-groupe input[type="password"],
+.form-groupe select {
+    flex: 1;
+    /* Prend tout l'espace restant */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Styles pour les boutons radio */
+.radio-options {
+    display: flex;
+    gap: 15px;
+    /* Espace entre chaque bouton radio */
+    align-items: center;
+}
+
+.radio-options label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+/* Zone du bouton de validation */
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.form-actions input[type="submit"] {
+    background-color: #2e7d32;
+    color: white;
+    padding: 12px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.form-actions input[type="submit"]:hover {
+    background-color: #1b5e20;
+}
+
+/* Lien en bas du formulaire */
+.lien-connexion {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.lien-connexion a {
+    color: #2e7d32;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.lien-connexion a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,9 @@
+Arrivée sur le site sans rôle
+--> inscription = joueur, pour passer admin, demande via contact (à définir) et validation en sql
+inscription = création d'un joueur avec un attribut admin false
+bouton accueil <=> inscription + bouton retour dans les 2
+onglet demande admin visible que si c'est un joueur connecté avec attribut admin = false
+une équipe = code équipe --> lorsque joueur rejoind équipe, il rentre code pour valider
+joueur demande à créer une équipe, admin valide, joueur qui demande devient capitaine
+admin créé tournoi
+capitaine ajoute équipe à tournoi, verif sql group by equipe-->5joueurs mini ds l'équipe pour que la demande passe, puis admin valide
