@@ -1,40 +1,39 @@
-<h2>📊 Statistiques de la saison</h2>
-<p>Analyse tes performances sur le terrain.</p>
+<div class="carte-action w-g">
+    <h2 class="titre-centre titre-sans-marge-haut">📊 Statistiques de la saison</h2>
+    <p class="sous-titre-centre">Analyse tes performances sur le terrain.</p>
 
-<table style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
-    <thead>
-        <tr style="background-color: #2e7d32; color: white;">
-            <th style="padding: 12px; border: 1px solid #ddd;">Joueur</th>
-            <th style="padding: 12px; border: 1px solid #ddd;">Matchs joués</th>
-            <th style="padding: 12px; border: 1px solid #ddd;">Buts ⚽</th>
-            <th style="padding: 12px; border: 1px solid #ddd;">Passes décisives 👟</th>
-            <th style="padding: 12px; border: 1px solid #ddd;">Homme du match 🌟</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background-color: #f9f9f9;">
-            <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">Toi (Attaquant)</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">12</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">15</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">4</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">3</td>
-        </tr>
-        <tr>
-            <td style="padding: 12px; border: 1px solid #ddd;">Jean (Milieu)</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">12</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">2</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">18</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">5</td>
-        </tr>
-        <h2>📊 Statistiques de la saison</h2>
-        <p>Analyse tes performances sur le terrain.</p>
-        <p><em>Le tableau des scores viendra ici...</em></p>
-        <tr style="background-color: #f9f9f9;">
-            <td style="padding: 12px; border: 1px solid #ddd;">Marc (Gardien)</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">10</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">0</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">1</td>
-            <td style="padding: 12px; border: 1px solid #ddd;">4</td>
-        </tr>
-    </tbody>
-</table>
+    <table class="table-stats">
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Matchs joués</th>
+                <th>Buts ⚽</th>
+                <th>Passes décisives 👟</th>
+                <th>Homme du match 🌟</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Toi (Attaquant)</strong></td>
+                <td>12</td>
+                <td>15</td>
+                <td>4</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>Jean (Milieu)</td>
+                <td>12</td>
+                <td>2</td>
+                <td>18</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Marc (Gardien)</td>
+                <td>10</td>
+                <td>0</td>
+                <td>1</td>
+                <td>4</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

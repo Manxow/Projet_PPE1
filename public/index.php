@@ -1,102 +1,180 @@
 <?php
 // public/index.php
-session_start();
+require_once __DIR__ . '/../models/ModelJoueur.php';
+require_once __DIR__ . '/../models/ModelEquipe.php';
 
-// On récupère l'action demandée (par défaut 'accueil')
+// Initialisation de la session si elle n'existe pas encore
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Récupération de l'action demandée (par défaut 'accueil')
 $action = $_GET['action'] ?? 'accueil';
 
-// --- LE ROUTEUR (Switch) ---
+// =========================================================================
+// LE ROUTEUR PRINCIPAL (Aiguilleur)
+// =========================================================================
 switch ($action) {
 
-    // ------------------------------------
-    // ZONE PUBLIQUE (Accueil)
-    // ------------------------------------
+    // ---------------------------------------------------------------------
+    // 1. ZONE PUBLIQUE (Visiteurs)
+    // ---------------------------------------------------------------------
     case 'accueil':
         require_once __DIR__ . '/../controllers/HomeController.php';
-        $controller = new HomeController();
-        $controller->afficherAccueil();
+        (new HomeController())->afficherAccueil();
         break;
 
-    // ------------------------------------
-    // ZONE AUTHENTIFICATION (AuthController)
-    // ------------------------------------
-    case 'inscription':
-        require_once __DIR__ . '/../controllers/AuthController.php';
-        $controller = new AuthController();
-        $controller->afficherInscription();
-        break;
-
+    // ---------------------------------------------------------------------
+    // 2. AUTHENTIFICATION (Connexion, Déconnexion, Traitements)
+    // ---------------------------------------------------------------------
     case 'connexion':
         require_once __DIR__ . '/../controllers/AuthController.php';
-        $controller = new AuthController();
-        $controller->afficherConnexion();
-        break;
-
-    case 'traiter_inscription': // Quand le formulaire POST est envoyé
-        require_once __DIR__ . '/../controllers/AuthController.php';
-        $controller = new AuthController();
-        $controller->traiterInscription();
+        (new AuthController())->afficherConnexion();
         break;
 
     case 'traiter_connexion':
         require_once __DIR__ . '/../controllers/AuthController.php';
-        $controller = new AuthController();
-        $controller->traiterConnexion();
+        (new AuthController())->traiterConnexion();
         break;
 
-    // Inscription / profile joueur
-    case 'inscription_joueur':
-        require_once __DIR__ . '/../controllers/JoueurController.php';
-        $controller = new JoueurController();
-        $controller->afficherInscriptionJoueur();
+    case 'deconnexion':
+        require_once __DIR__ . '/../controllers/AuthController.php';
+        (new AuthController())->deconnexion();
+        break;
+
+    case 'inscription':
+        require_once __DIR__ . '/../controllers/AuthController.php';
+        (new AuthController())->afficherInscription();
         break;
 
     case 'traiter_inscription_joueur':
+        require_once __DIR__ . '/../controllers/AuthController.php';
+        (new AuthController())->traiterInscription();
+        break;
+
+    // ---------------------------------------------------------------------
+    // 3. GESTION DU PROFIL JOUEUR
+    // ---------------------------------------------------------------------
+    case 'inscription_joueur':
         require_once __DIR__ . '/../controllers/JoueurController.php';
-        $controller = new JoueurController();
-        $controller->traiterInscriptionJoueur();
+        (new JoueurController())->afficherInscriptionJoueur();
         break;
 
     case 'profile':
         require_once __DIR__ . '/../controllers/JoueurController.php';
-        $controller = new JoueurController();
-        $controller->afficherProfile();
+        (new JoueurController())->afficherProfile();
         break;
 
     case 'traiter_profile':
         require_once __DIR__ . '/../controllers/JoueurController.php';
-        $controller = new JoueurController();
-        $controller->traiterProfile();
+        (new JoueurController())->traiterProfile();
         break;
 
-    // ------------------------------------
-    // ZONE SPORTIVE (Equipe, Tournoi, Stats)
-    // ------------------------------------
+    // ---------------------------------------------------------------------
+    // 4. GESTION DES ÉQUIPES (Côté Joueur / Capitaine)
+    // ---------------------------------------------------------------------
     case 'equipe':
         require_once __DIR__ . '/../controllers/EquipeController.php';
-        $controller = new EquipeController();
-        $controller->afficherEquipe();
+        (new EquipeController())->afficherEquipe();
         break;
 
+    case 'creer_equipe':
+        require_once __DIR__ . '/../controllers/EquipeController.php';
+        (new EquipeController())->traiterCreerEquipe();
+        break;
+
+    case 'rejoindre_equipe':
+        require_once __DIR__ . '/../controllers/EquipeController.php';
+        (new EquipeController())->traiterRejoindreEquipe();
+        break;
+
+    case 'quitter_equipe':
+        require_once __DIR__ . '/../controllers/EquipeController.php';
+        (new EquipeController())->traiterQuitterEquipe();
+        break;
+
+    // ---------------------------------------------------------------------
+    // 5. ZONE SPORTIVE (Tournois & Statistiques côté Joueur)
+    // ---------------------------------------------------------------------
     case 'tournoi':
         require_once __DIR__ . '/../controllers/TournoiController.php';
-        $controller = new TournoiController();
-        $controller->afficherTournoi();
+        (new TournoiController())->afficherTournois();
+        break;
+
+    case 'inscription_tournoi':
+        require_once __DIR__ . '/../controllers/TournoiController.php';
+        (new TournoiController())->traiterInscription();
         break;
 
     case 'statistiques':
         require_once __DIR__ . '/../controllers/StatsController.php';
-        $controller = new StatsController();
-        $controller->afficherStatistiques();
+        (new StatsController())->afficherStatistiques();
         break;
 
-    // ------------------------------------
-    // SÉCURITÉ : Page introuvable ou URL modifiée
-    // ------------------------------------
+    // =====================================================================
+    // 6. ZONE ADMINISTRATION (Réservé aux Admins)
+    // =====================================================================
+    case 'admin_panel':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->afficherPanel();
+        break;
+
+    // Actions Admin : Équipes
+    case 'accepter_equipe':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->accepterEquipe();
+        break;
+
+    case 'refuser_equipe':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->refuserEquipe();
+        break;
+
+    // Actions Admin : Tournois
+    case 'admin_creer_tournoi':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->traiterCreerTournoi();
+        break;
+
+    case 'admin_supprimer_tournoi':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->traiterSupprimerTournoi();
+        break;
+
+    case 'admin_generer_poules':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->genererPoules();
+        break;
+
+    // --- Édition contextuelle ---
+
+    //tournoi
+
+    case 'traiter_editer_tournoi':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->traiterEditerTournoi();
+        break;
+
+    //équipe
+
+    case 'traiter_editer_equipe':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->traiterEditerEquipe();
+        break;
+
+    // Dans le switch ($action) de index.php
+
+    case 'admin_supprimer_equipe':
+        require_once __DIR__ . '/../controllers/AdminController.php';
+        (new AdminController())->traiterSupprimerEquipe();
+        break;
+
+    // ---------------------------------------------------------------------
+    // 7. SÉCURITÉ (Page introuvable ou URL bidouillée)
+    // ---------------------------------------------------------------------
     default:
-        // Si l'action n'existe pas, on redirige vers l'accueil
+        // Redirection silencieuse vers l'accueil
         require_once __DIR__ . '/../controllers/HomeController.php';
-        $controller = new HomeController();
-        $controller->afficherAccueil();
+        (new HomeController())->afficherAccueil();
         break;
 }
