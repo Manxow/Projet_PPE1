@@ -112,7 +112,20 @@ switch ($action) {
         break;
 
     // =====================================================================
-    // 6. ZONE ADMINISTRATION (Réservé aux Admins)
+    // 7. GESTION DES MATCHS
+    // =====================================================================
+    case 'saisir_resultat':
+        require_once __DIR__ . '/../controllers/MatchController.php';
+        (new MatchController())->afficherSaisieResultat();
+        break;
+
+    case 'traiter_saisir_resultat':
+        require_once __DIR__ . '/../controllers/MatchController.php';
+        (new MatchController())->traiterSaisieResultat();
+        break;
+
+    // =====================================================================
+    // 8. ZONE ADMINISTRATION (Réservé aux Admins)
     // =====================================================================
     case 'admin_panel':
         require_once __DIR__ . '/../controllers/AdminController.php';
@@ -142,8 +155,13 @@ switch ($action) {
         break;
 
     case 'admin_generer_poules':
-        require_once __DIR__ . '/../controllers/AdminController.php';
-        (new AdminController())->genererPoules();
+        require_once __DIR__ . '/../controllers/PouleController.php';
+        (new PouleController())->generer();
+        break;
+
+    case 'voir_poules':
+        require_once __DIR__ . '/../controllers/PouleController.php';
+        (new PouleController())->voirPoules();
         break;
 
     // --- Édition contextuelle ---
@@ -168,6 +186,7 @@ switch ($action) {
         require_once __DIR__ . '/../controllers/AdminController.php';
         (new AdminController())->traiterSupprimerEquipe();
         break;
+
 
     // ---------------------------------------------------------------------
     // 7. SÉCURITÉ (Page introuvable ou URL bidouillée)

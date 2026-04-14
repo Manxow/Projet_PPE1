@@ -125,7 +125,7 @@ class ModelTournoi
     {
         $pdo = database::Connexion();
         // On met à jour l'inscription de l'équipe pour lui donner une poule
-        $sql = "UPDATE inscriptions_tournois 
+        $sql = "UPDATE inscription_tournoi 
             SET poule = :poule 
             WHERE id_tournoi = :id_t AND id_equipe = :id_e";
         $stmt = $pdo->prepare($sql);
@@ -140,7 +140,7 @@ class ModelTournoi
     public static function getEquipesInscrites($idTournoi)
     {
         $pdo = database::Connexion();
-        $sql = "SELECT id_equipe FROM inscriptions_tournois WHERE id_tournoi = :id ORDER BY date_inscription ASC";
+        $sql = "SELECT id_equipe FROM inscription_tournoi WHERE id_tournoi = :id ORDER BY date_inscription ASC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['id' => $idTournoi]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -150,7 +150,7 @@ class ModelTournoi
     public static function majPouleEquipe($idTournoi, $idEquipe, $lettrePoule)
     {
         $pdo = database::Connexion();
-        $sql = "UPDATE inscriptions_tournois SET poule = :poule 
+        $sql = "UPDATE inscription_tournoi SET poule = :poule 
             WHERE id_tournoi = :id_t AND id_equipe = :id_e";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([
@@ -163,11 +163,78 @@ class ModelTournoi
     public static function updateStatut($idTournoi, $nouveauStatut)
     {
         $pdo = database::Connexion();
-        $sql = "UPDATE tournois SET statut = :statut WHERE id_tournoi = :id";
+        $sql = "UPDATE tournoi SET statut = :statut WHERE id_tournoi = :id";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             'statut' => $nouveauStatut,
             'id'     => $idTournoi
         ]);
+    }
+
+    /**
+     * Les prochains tournois (hors tournois déjà en cours/terminés).
+     */
+    public static function getProchainsTournois($limit = 3)
+    {
+        $pdo = database::Connexion();
+        $limit = max(1, (int)$limit);
+
+        $sql = "SELECT t.*,
+                       (SELECT COUNT(*) FROM inscription_tournoi it WHERE it.id_tournoi = t.id_tournoi) AS nb_inscrits
+                FROM tournoi t
+                WHERE t.statut IN ('ouvert', 'complet')
+                ORDER BY t.date_debut ASC, t.id_tournoi ASC
+                LIMIT $limit";
+
+        return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Le tournoi en cours du joueur (via son équipe), s'il existe.
+     */
+    public static function getTournoiEnCoursEquipe($id_equipe)
+    {
+        $pdo = database::Connexion();
+        $sql = "SELECT t.*,
+                       (SELECT COUNT(*) FROM inscription_tournoi it WHERE it.id_tournoi = t.id_tournoi) AS nb_inscrits
+                FROM tournoi t
+                JOIN inscription_tournoi it ON it.id_tournoi = t.id_tournoi
+                WHERE it.id_equipe = :id_e
+                  AND t.statut = 'en_cours'
+                ORDER BY t.date_debut ASC, t.id_tournoi ASC
+                LIMIT 1";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id_e' => (int)$id_equipe]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    // Récupérer les tournois terminés (statut = 'termine')
+    public static function getTournoisTermines()
+    {
+        $pdo = database::Connexion();
+        $sql = "SELECT t.*,
+                (SELECT COUNT(*) FROM inscription_tournoi WHERE id_tournoi = t.id_tournoi) as nb_inscrits
+                FROM tournoi t
+                WHERE t.statut = 'termine'
+                ORDER BY t.date_fin DESC";
+        return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Equipes participantes d'un tournoi (ordre d'inscription).
+     */
+    public static function getParticipantsTournoi($id_tournoi)
+    {
+        $pdo = database::Connexion();
+        $sql = "SELECT e.id_equipe, e.nom, it.date_inscription
+                FROM inscription_tournoi it
+                JOIN equipe e ON e.id_equipe = it.id_equipe
+                WHERE it.id_tournoi = :id_t
+                ORDER BY it.date_inscription ASC, e.nom ASC";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id_t' => (int)$id_tournoi]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

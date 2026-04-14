@@ -1,6 +1,6 @@
 <?php
 
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 class ModelJoueur
 {
@@ -199,7 +199,7 @@ class ModelJoueur
     public static function getJoueurByPseudo($pseudo)
     {
         try {
-            $requete = 'SELECT id_joueur, user, pw, is_admin
+            $requete = 'SELECT id_joueur, user, pw, is_admin, id_equipe
             FROM joueur
             WHERE user = :pseudo';
 
@@ -374,5 +374,24 @@ class ModelJoueur
         $stmt->bindValue(':id_joueur', $id_joueur, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+
+    public static function getJoueursParEquipe($id_equipe)
+    {
+        try {
+            $requete = "SELECT id_joueur, user, nom, prenom, poste, niveau 
+                        FROM joueur 
+                        WHERE id_equipe = :id_equipe
+                        ORDER BY nom ASC, prenom ASC";
+
+            $pdo = database::Connexion();
+            $stmt = $pdo->prepare($requete);
+            $stmt->bindParam(':id_equipe', $id_equipe, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die('Erreur SQL : ' . $e->getMessage());
+        }
     }
 }

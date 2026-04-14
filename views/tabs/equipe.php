@@ -8,8 +8,13 @@
     <?php unset($_SESSION['flash_message_erreur']); ?>
 <?php endif; ?>
 
+<?php
+$editEquipeId = $_GET['edit_equipe_id'] ?? null;
+$estAdmin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1;
+?>
+
 <?php if (!$estConnecte): ?>
-    <div class="carte-action w-" g>
+    <div class="carte-action w-g">
         <div class="hub-equipe-entete">
             <h1 class="titre-sans-marge-haut">Les Équipes du Tournoi</h1>
             <p>Tu dois être connecté pour rejoindre une équipe ou fonder la tienne !</p>
@@ -21,16 +26,48 @@
     </div>
 
     <div class="liste-equipes-publiques mt-40">
-        <h2 class="titre-centre">Équipes déjà inscrites :</h2>
-        <?php if (!empty($listeEquipesValidees)): ?>
-            <ul>
-                <?php foreach ($listeEquipesValidees as $equipe): ?>
-                    <li><?= htmlspecialchars($equipe['nom']) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        <?php else: ?>
-            <p class="titre-centre">Aucune équipe n'est encore validée.</p>
-        <?php endif; ?>
+        <div class="carte-action w-g">
+            <h2 class="titre-centre titre-sans-marge-haut">Équipes déjà inscrites :</h2>
+            <?php if (!empty($listeEquipesValidees)): ?>
+                <div class="liste-equipes-complete">
+                    <?php foreach ($listeEquipesValidees as $equipe): ?>
+                        <div class="carte-equipe-detail">
+                            <h3><?= htmlspecialchars($equipe['nom']) ?></h3>
+
+                            <?php if (!empty($equipe['joueurs'])): ?>
+                                <table class="tableau-joueurs">
+                                    <thead>
+                                        <tr>
+                                            <th>Pseudo</th>
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Poste</th>
+                                            <th>Niveau</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($equipe['joueurs'] as $joueur): ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($joueur['user']) ?></td>
+                                                <td><?= htmlspecialchars($joueur['nom']) ?></td>
+                                                <td><?= htmlspecialchars($joueur['prenom']) ?></td>
+                                                <td><?= htmlspecialchars($joueur['poste']) ?></td>
+                                                <td><?= htmlspecialchars($joueur['niveau']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <p class="info-equipe">Total : <strong><?= count($equipe['joueurs']) ?></strong> joueur(s)</p>
+                            <?php else: ?>
+                                <p class="titre-centre">Aucun joueur inscrit dans cette équipe.</p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="titre-centre">Aucune équipe n'est encore validée.</p>
+            <?php endif; ?>
+        </div>
     </div>
 
 <?php elseif ($aUneEquipe): ?>
@@ -50,8 +87,96 @@
             <?php endif; ?>
 
         <?php else: ?>
-            <p class="titre-centre">Bienvenue dans le vestiaire ! Ici tu retrouveras les stats de ton équipe.</p>
+            <p class="titre-centre">Bienvenue dans le vestiaire ! Ici tu retrouveras tes coéquipiers et ceux des autres équipes.</p>
         <?php endif; ?>
+
+        <div class="sous-navigation">
+            <a href="index.php?action=equipe&sous_onglet=mes_joueurs" class="sous-onglet <?= $sous_onglet == 'mes_joueurs' ? 'actif' : '' ?>">Mon équipe</a>
+            <a href="index.php?action=equipe&sous_onglet=toutes_equipes" class="sous-onglet onglet-bleu <?= $sous_onglet == 'toutes_equipes' ? 'actif' : '' ?>">Les équipes</a>
+        </div>
+    </div>
+
+    <div class="contenu-sous-onglet">
+
+        <?php if ($sous_onglet == 'mes_joueurs'): ?>
+            <div class="carte-action w-g">
+                <h2 class="titre-centre">Joueurs de <?= htmlspecialchars($nomDeMonEquipe ?? 'l\'équipe') ?></h2>
+
+                <?php if (!empty($joueursMonEquipe)): ?>
+                    <table class="tableau-joueurs">
+                        <thead>
+                            <tr>
+                                <th>Pseudo</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Poste</th>
+                                <th>Niveau</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($joueursMonEquipe as $joueur): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($joueur['user']) ?></td>
+                                    <td><?= htmlspecialchars($joueur['nom']) ?></td>
+                                    <td><?= htmlspecialchars($joueur['prenom']) ?></td>
+                                    <td><?= htmlspecialchars($joueur['poste']) ?></td>
+                                    <td><?= htmlspecialchars($joueur['niveau']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <p class="info-equipe">Total : <strong><?= count($joueursMonEquipe) ?></strong> joueur(s)</p>
+                <?php else: ?>
+                    <p class="titre-centre">Aucun joueur dans ton équipe pour le moment.</p>
+                <?php endif; ?>
+            </div>
+
+        <?php elseif ($sous_onglet == 'toutes_equipes'): ?>
+            <div class="carte-action w-g">
+                <h2 class="titre-centre">Toutes les équipes</h2>
+
+                <?php if (!empty($listeEquipesValidees)): ?>
+                    <div class="liste-equipes-complete">
+                        <?php foreach ($listeEquipesValidees as $equipe): ?>
+                            <div class="carte-equipe-detail">
+                                <h3><?= htmlspecialchars($equipe['nom']) ?></h3>
+
+                                <?php if (!empty($equipe['joueurs'])): ?>
+                                    <table class="tableau-joueurs">
+                                        <thead>
+                                            <tr>
+                                                <th>Pseudo</th>
+                                                <th>Nom</th>
+                                                <th>Prénom</th>
+                                                <th>Poste</th>
+                                                <th>Niveau</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($equipe['joueurs'] as $joueur): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($joueur['user']) ?></td>
+                                                    <td><?= htmlspecialchars($joueur['nom']) ?></td>
+                                                    <td><?= htmlspecialchars($joueur['prenom']) ?></td>
+                                                    <td><?= htmlspecialchars($joueur['poste']) ?></td>
+                                                    <td><?= htmlspecialchars($joueur['niveau']) ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                    <p class="info-equipe">Total : <strong><?= count($equipe['joueurs']) ?></strong> joueur(s)</p>
+                                <?php else: ?>
+                                    <p class="titre-centre">Aucun joueur inscrit dans cette équipe.</p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="titre-centre">Aucune équipe validée pour le moment.</p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
     </div>
 
 <?php else: ?>
@@ -74,12 +199,13 @@
             <div class="liste-equipes-publiques">
                 <h2>Toutes les équipes inscrites :</h2>
                 <?php if (!empty($listeEquipesValidees)): ?>
-                    <ul>
+                    <div class="liste-equipes-complete">
                         <?php foreach ($listeEquipesValidees as $equipe): ?>
-                            <?php $enModeEditionEquipe = (isset($_GET['edit_equipe_id']) && $_GET['edit_equipe_id'] == $equipe['id_equipe'] && isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1); ?>
+                            <?php $enModeEditionEquipe = ($editEquipeId == $equipe['id_equipe'] && $estAdmin); ?>
 
                             <?php if ($enModeEditionEquipe): ?>
-                                <li class="ligne-equipe-admin mode-edition-equipe">
+                                <div class="carte-equipe-detail mode-edition-equipe">
+                                    <h3>Modifier l'équipe</h3>
                                     <form action="index.php?action=traiter_editer_equipe" method="POST" class="form-edition-inline">
                                         <input type="hidden" name="id_equipe" value="<?= $equipe['id_equipe'] ?>">
                                         <input type="hidden" name="provenance" value="equipe">
@@ -90,26 +216,56 @@
                                             <a href="index.php?action=equipe&sous_onglet=liste" class="btn btn-rouge btn-petit" title="Annuler">❌</a>
                                         </div>
                                     </form>
-                                </li>
+                                </div>
                             <?php else: ?>
-                                <li class="ligne-equipe-admin">
-                                    <span><?= htmlspecialchars($equipe['nom']) ?></span>
+                                <div class="carte-equipe-detail">
+                                    <div class="ligne-equipe-admin">
+                                        <h3><?= htmlspecialchars($equipe['nom']) ?></h3>
 
-                                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
-                                        <div class="actions-admin-equipe">
-                                            <a href="index.php?action=equipe&sous_onglet=liste&edit_equipe_id=<?= $equipe['id_equipe'] ?>" class="btn btn-orange btn-petit" title="Modifier">✏️</a>
+                                        <?php if ($estAdmin): ?>
+                                            <div class="actions-admin-equipe">
+                                                <a href="index.php?action=equipe&sous_onglet=liste&edit_equipe_id=<?= $equipe['id_equipe'] ?>" class="btn btn-orange btn-petit" title="Modifier">✏️</a>
 
-                                            <form action="index.php?action=admin_supprimer_equipe" method="POST" class="form-sans-marge" onsubmit="return confirm('Supprimer définitivement cette équipe et libérer ses joueurs ?');">
-                                                <input type="hidden" name="id_equipe" value="<?= $equipe['id_equipe'] ?>">
-                                                <input type="hidden" name="provenance" value="equipe">
-                                                <button type="submit" class="btn btn-rouge btn-petit" title="Supprimer">🗑️</button>
-                                            </form>
-                                        </div>
+                                                <form action="index.php?action=admin_supprimer_equipe" method="POST" class="form-sans-marge" onsubmit="return confirm('Supprimer définitivement cette équipe et libérer ses joueurs ?');">
+                                                    <input type="hidden" name="id_equipe" value="<?= $equipe['id_equipe'] ?>">
+                                                    <input type="hidden" name="provenance" value="equipe">
+                                                    <button type="submit" class="btn btn-rouge btn-petit" title="Supprimer">🗑️</button>
+                                                </form>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <?php if (!empty($equipe['joueurs'])): ?>
+                                        <table class="tableau-joueurs">
+                                            <thead>
+                                                <tr>
+                                                    <th>Pseudo</th>
+                                                    <th>Nom</th>
+                                                    <th>Prénom</th>
+                                                    <th>Poste</th>
+                                                    <th>Niveau</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($equipe['joueurs'] as $joueur): ?>
+                                                    <tr>
+                                                        <td><?= htmlspecialchars($joueur['user']) ?></td>
+                                                        <td><?= htmlspecialchars($joueur['nom']) ?></td>
+                                                        <td><?= htmlspecialchars($joueur['prenom']) ?></td>
+                                                        <td><?= htmlspecialchars($joueur['poste']) ?></td>
+                                                        <td><?= htmlspecialchars($joueur['niveau']) ?></td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                        <p class="info-equipe">Total : <strong><?= count($equipe['joueurs']) ?></strong> joueur(s)</p>
+                                    <?php else: ?>
+                                        <p class="titre-centre">Aucun joueur inscrit dans cette équipe.</p>
                                     <?php endif; ?>
-                                </li>
+                                </div>
                             <?php endif; ?>
                         <?php endforeach; ?>
-                    </ul>
+                    </div>
                 <?php else: ?>
                     <p>Aucune équipe n'est encore validée. Sois le premier à en créer une !</p>
                 <?php endif; ?>

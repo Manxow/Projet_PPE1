@@ -151,13 +151,8 @@ class AuthController
         $player = ModelJoueur::getJoueurByPseudo($pseudo);
         if ($player && password_verify($mdp, $player['pw'])) {
 
-            // $monId = $player['id_joueur'];
-            // $player = ModelJoueur::getJoueurById($monId);
-            // $monJoueur = new ModelJoueur($player['user'], $player['pw'], $player['nom'], $player['prenom'], $player['poste'], $player['niveau'], $player['id_equipe']);
-            // $monId = $monJoueur->getMonId();
-            //  $monJoueur->setId($monId);
-            //  $_SESSION['joueur'] = $monJoueur;
-            // $_SESSION['id_joueur'] = $monId;
+            // Régénérer l'ID de session pour éviter les vieilles sessions
+            session_regenerate_id(true);
 
             // SUCCÈS : On connecte le joueur
             $_SESSION['id_joueur'] = $player['id_joueur'];
@@ -167,13 +162,11 @@ class AuthController
 
             // NOUVEAU : On sauvegarde son statut (0 = Joueur, 1 = Admin)
             $_SESSION['is_admin'] = $player['is_admin'];
-            // $_SESSION['idTeam'] = $player['id_equipe'];
+            $_SESSION['idTeam'] = $player['id_equipe'];
+            $_SESSION['nomTeam'] = $player['id_equipe'] ? ModelEquipe::getNomEquipe($player['id_equipe']) : null;
 
             // On nettoie le pseudo temporaire
             unset($_SESSION['nom_utilisateur']);
-
-            // $equipeDuJoueur = new ModelEquipe($player['id_equipe']);
-            // $_SESSION['nomTeam'] = $equipeDuJoueur->getNomEquipe();
 
 
             header('Location: index.php?action=profile');

@@ -1,15 +1,42 @@
 <?php
 require_once __DIR__ . '/../models/ModelTournoi.php';
 require_once __DIR__ . '/../models/ModelEquipe.php';
+require_once __DIR__ . '/../models/ModelPoule.php';
+require_once __DIR__ . '/../models/ModelMatch.php';
+require_once __DIR__ . '/../models/ModelPhaseFinale.php';
 
 class TournoiController
 {
-
     public function afficherTournois()
     {
+        // 1. On récupère la liste basique des tournois
         $tournois = ModelTournoi::getTournoisDisponibles();
 
-        // On vérifie si l'utilisateur est capitaine pour afficher le bouton
+        // 🎯 LE NOUVEAU BLOC EST ICI : 
+        // On parcourt la liste et on ajoute les poules pour les tournois en cours
+        foreach ($tournois as &$t) {
+            if ($t['statut'] === 'en_cours') {
+                $t['poules'] = ModelPoule::getPoulesComplet($t['id_tournoi']);
+                $t['classements'] = ModelMatch::getClassementsTournoi($t['id_tournoi']);
+                $t['phases_finales'] = ModelPhaseFinale::getPhasesFinalesTournoi($t['id_tournoi']);
+            } elseif ($t['statut'] !== 'termine') {
+                // Avant le lancement (ouvert/complet/a_venir), on montre les participants.
+                $t['participants'] = ModelTournoi::getParticipantsTournoi($t['id_tournoi']);
+            }
+        }
+        unset($t); // Bonne pratique de sécurité en PHP après un foreach avec un "&"
+
+        // Tournois terminés : on récupère l'historique + classement final
+        $tournoisTermines = ModelTournoi::getTournoisTermines();
+        foreach ($tournoisTermines as &$t) {
+            $t['poules']          = ModelPoule::getPoulesComplet($t['id_tournoi']);
+            $t['classements']     = ModelMatch::getClassementsTournoi($t['id_tournoi']);
+            $t['phases_finales']  = ModelPhaseFinale::getPhasesFinalesTournoi($t['id_tournoi']);
+            $t['classement_final'] = ModelPhaseFinale::getClassementFinal($t['id_tournoi']);
+        }
+        unset($t);
+
+        // 2. On vérifie si l'utilisateur est capitaine pour afficher le bouton
         $estCapitaine = false;
         if (isset($_SESSION['id_joueur']) && isset($_SESSION['idTeam'])) {
             $equipe = ModelEquipe::getEquipeById($_SESSION['idTeam']);
@@ -18,6 +45,7 @@ class TournoiController
             }
         }
 
+        // 3. On envoie tout à la vue
         $typePage = 'onglet';
         $fichierVue = 'tabs/tournoi.php';
         $action = 'tournoi';

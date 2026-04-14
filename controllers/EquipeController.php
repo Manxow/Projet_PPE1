@@ -17,8 +17,16 @@ class EquipeController
 
         $listeEquipesValidees = ModelEquipe::getEquipesValidees();
 
-        // On capte le sous-onglet demandé dans l'URL (par défaut : 'liste')
-        $sous_onglet = $_GET['sous_onglet'] ?? 'liste';
+        // On charge les joueurs pour chaque équipe
+        foreach ($listeEquipesValidees as &$equipe) {
+            $equipe['joueurs'] = ModelJoueur::getJoueursParEquipe($equipe['id_equipe']);
+        }
+        unset($equipe);
+
+        // On capte le sous-onglet demandé dans l'URL.
+        $sous_onglet = $_GET['sous_onglet'] ?? null;
+
+        $joueursMonEquipe = [];
 
         if ($estConnecte) {
             $id_joueur = $_SESSION['id_joueur'];
@@ -36,10 +44,20 @@ class EquipeController
 
                     // NOUVEAU : On récupère le statut de l'équipe (en_attente ou valide)
                     $statutEquipe = $equipeDuJoueur['statut'];
+
+                    // On récupère les joueurs de l'équipe
+                    $joueursMonEquipe = ModelJoueur::getJoueursParEquipe($id_equipe);
                 } else {
                     $nomDeMonEquipe = 'Équipe introuvable';
                 }
             }
+        }
+
+        // Par défaut :
+        // - joueur avec équipe => sous-onglet "Mon équipe"
+        // - sinon => sous-onglet "Les équipes"
+        if ($sous_onglet === null) {
+            $sous_onglet = $aUneEquipe ? 'mes_joueurs' : 'liste';
         }
 
         $typePage = 'onglet';
